@@ -1,15 +1,13 @@
 package handlers
 
 import (
-	"log"
 	"music_library/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func GetMusicHandler(c *gin.Context) {
-	log.Println("here")
+func GetMusic(c *gin.Context) {
 	song, _ := c.GetQuery("song")
 
 	group, _ := c.GetQuery("group")
@@ -19,7 +17,15 @@ func GetMusicHandler(c *gin.Context) {
 		Group: group,
 	}
 
-	music.GetMusic(model.DB) // ищем песню по названию и группе
+	err := music.Get() // ищем песню по названию и группе
+
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, &model.ResponseError{
+			Err: err.Error(),
+		})
+
+		return
+	}
 
 	c.IndentedJSON(http.StatusOK, music) // сериализуем JSON
 

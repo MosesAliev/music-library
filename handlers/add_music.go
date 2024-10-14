@@ -11,11 +11,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddMusicHandlers(c *gin.Context) {
+func AddMusic(c *gin.Context) {
 	var music model.Music
 	c.ShouldBindJSON(&music) // десериализуем JSON
 
-	music.AddMusic(model.DB) // добавляем песню в БД
+	err := music.Add() // добавляем песню в БД
+
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, &model.ResponseError{
+			Err: err.Error(),
+		})
+
+		return
+	}
 
 	url := fmt.Sprintf("http://localhost:8080/info?song=%s&group=%s", music.Song, music.Group)
 
