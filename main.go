@@ -1,12 +1,12 @@
 package main
 
 import (
-	"music_library/model"
+	"music_library/db"
 	"music_library/router"
 )
 
 func init() {
-	model.DB.ConnectDB()
+	db.ConnectDB()
 
 	r := router.SetupRouter()
 
